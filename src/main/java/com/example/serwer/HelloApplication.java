@@ -16,10 +16,12 @@ import java.sql.SQLException;
 
 public class HelloApplication extends Application {
     public static String user;
+    public static double saldo;
+    public static String saldostr;
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("loginMenu.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
         stage.setTitle("Hello!");
         stage.setScene(scene);
@@ -39,10 +41,11 @@ public class HelloApplication extends Application {
             System.out.println("Haslo: " + resultSet.getString("haslo"));
             System.out.println("Portfel: " + resultSet.getString("portfel"));
             user = resultSet.getString("Imie");
+            saldo = resultSet.getDouble("portfel");
             System.out.println("Imie uzytkownika: "+user);
 
         }
-
+        saldostr = Double.toString(saldo);
         launch();
     }
 }
