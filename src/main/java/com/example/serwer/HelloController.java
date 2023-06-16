@@ -29,7 +29,7 @@ public class HelloController implements Initializable {
     private Scene scene;
     private Parent root;
     @FXML
-     Label WelcomeLabel;
+    Label WelcomeLabel;
     @FXML
     Button ProfileBtn;
     @FXML
@@ -41,7 +41,7 @@ public class HelloController implements Initializable {
         Parent root = FXMLLoader.load(getClass().getResource("hello-view.fxml"));
         stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         scene = new Scene(root);
-       // scene.getStylesheets().add(css);
+        // scene.getStylesheets().add(css);
         //setUsername(username);
         stage.setScene(scene);
         stage.show();
@@ -51,10 +51,10 @@ public class HelloController implements Initializable {
 
     }
 
-public void onProfileButtonClick(ActionEvent e)
-{
-    SaldoLabel.setText(saldostr);
-}
+    public void onProfileButtonClick(ActionEvent e)
+    {
+        SaldoLabel.setText(saldostr);
+    }
 
 
     @FXML
