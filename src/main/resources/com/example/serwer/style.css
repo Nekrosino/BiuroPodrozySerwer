@@ -1,0 +1,37 @@
+.button{
+   /* -fx-background-color: #01BED2;*/
+    -fx-font-family: "Tahoma";
+    -fx-text-fill: "white";
+    -fx-font-weight: bold;
+     -fx-background-color: linear-gradient(to bottom, #6dd5ed, #2193b0); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+     -fx-text-align: center;
+
+}
+    .button:hover {
+        -fx-font-family: "Tahoma";
+        -fx-text-fill: "white";
+        -fx-font-weight: bold;
+        -fx-background-color: #2193b0;
+        -fx-text-align: center;
+    }
+.Background {
+
+
+
+    -fx-background-color: linear-gradient(to bottom, #6dd5ed, #2193b0); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
+#RPanelVbox {
+    -fx-background-color:#2193b0;
+}
+
+#LPanelVbox {
+    -fx-background-color: #27A9CA;
+}
+
+#TopPanelHbox
+{
+
+}
+  /*-fx-background-color: linear-gradient(to bottom ,#70e1f5,#ffd194); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */

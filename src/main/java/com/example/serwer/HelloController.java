@@ -55,6 +55,8 @@ public void onProfileButtonClick(ActionEvent e)
 {
     SaldoLabel.setText(saldostr);
 }
+
+
     @FXML
     public void initialize(URL url, ResourceBundle resourceBundle) {
         WelcomeLabel.setText("Hello "+ user+"!");

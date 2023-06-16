@@ -16,15 +16,18 @@ import java.sql.SQLException;
 
 public class HelloApplication extends Application {
     public static String user;
-    public static double saldo;
+    public static float saldo;
     public static String saldostr;
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("loginMenu.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+
+        Parent root = FXMLLoader.load(getClass().getResource("loginMenu.fxml"));
+        Scene loginMenu = new Scene( root);
         stage.setTitle("Hello!");
-        stage.setScene(scene);
+        String css=this.getClass().getResource("style.css").toExternalForm();
+        loginMenu.getStylesheets().add(css);
+        stage.setScene(loginMenu);
         stage.show();
 
     }
@@ -41,11 +44,12 @@ public class HelloApplication extends Application {
             System.out.println("Haslo: " + resultSet.getString("haslo"));
             System.out.println("Portfel: " + resultSet.getString("portfel"));
             user = resultSet.getString("Imie");
-            saldo = resultSet.getDouble("portfel");
+            saldo = resultSet.getFloat("portfel");
             System.out.println("Imie uzytkownika: "+user);
 
         }
-        saldostr = Double.toString(saldo);
+        saldostr = Float.toString(saldo);
         launch();
+        connection.close();
     }
 }
