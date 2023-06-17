@@ -16,9 +16,18 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URL;
+import java.sql.*;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.HashMap;
+import java.util.UUID;
 
 import static com.example.serwer.HelloApplication.user;
 import static com.example.serwer.HelloApplication.saldostr;
@@ -34,7 +43,77 @@ public class HelloController implements Initializable {
     Button ProfileBtn;
     @FXML
     Label SaldoLabel;
+    private ServerSocket serverSocket;
+    private Connection connection;
+    private Statement statement;
+    private Map<String, String> sessions = new HashMap<>(); // kolekcja sesji klientów
+    public void start() throws IOException {
+        // Tworzenie gniazda serwera
+        serverSocket = new ServerSocket(1234);
+        System.out.println("Serwer nasłuchuje na porcie 1234...");
 
+        while (true) {
+            // Oczekiwanie na połączenie klienta
+            Socket clientSocket = serverSocket.accept();
+            System.out.println("Połączono z klientem: " + clientSocket.getInetAddress().getHostAddress());
+
+            // Tworzenie strumieni wejścia/wyjścia dla klienta
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+            // Obsługa żądań klienta
+            String request = in.readLine();
+            System.out.println("Otrzymane żądanie: "+request);
+            // Logowanie klienta
+            if (request.startsWith("LOGIN")) {
+                String[] parts = request.split(" ");
+                String username = parts[1];
+                String password = parts[2];
+
+                // Sprawdzenie poprawności danych logowania
+                if (checkCredentials(username, password)) {
+                    // Generowanie identyfikatora sesji
+                    String sessionId = generateSessionId();
+                    sessions.put(sessionId, username);
+
+                    // Wysłanie identyfikatora sesji do klienta
+                    out.println("SESSION_ID " + sessionId);
+                } else {
+                    out.println("LOGIN_FAILED");
+                }
+            }
+
+            // Wylogowanie klienta
+            else if (request.startsWith("LOGOUT")) {
+                String sessionId = request.split(" ")[1];
+
+                // Sprawdzenie, czy podany identyfikator sesji jest poprawny
+                if (sessions.containsKey(sessionId)) {
+                    sessions.remove(sessionId); // Usunięcie sesji klienta
+                    out.println("LOGOUT_SUCCESS");
+                } else {
+                    out.println("LOGOUT_FAILED");
+                }
+            }
+
+            // Obsługa innych żądań...
+
+            // Zamknięcie połączenia z klientem
+            clientSocket.close();
+        }
+    }
+
+    private boolean checkCredentials(String username, String password) {
+        // Sprawdzenie poprawności danych logowania
+        // (możesz zaimplementować własną logikę weryfikacji danych)
+        return username.equals("piotr") && password.equals("piotr");
+    }
+
+    private String generateSessionId() {
+        // Generowanie unikalnego identyfikatora sesji
+        // (możesz zaimplementować własną logikę generowania identyfikatorów sesji)
+        return UUID.randomUUID().toString();
+    }
 
 
     public void switchToMenu(ActionEvent event) throws IOException {
@@ -60,8 +139,19 @@ public class HelloController implements Initializable {
 
     @FXML
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        WelcomeLabel.setText("Hello "+ user+"!");
+        //WelcomeLabel.setText("Hello "+ user+"!");
+        try {
+            start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
+    }
 
+    public void stop() throws IOException {
+        // Zamknięcie gniazda serwera
+        if (serverSocket != null) {
+            serverSocket.close();
+        }
     }
 }

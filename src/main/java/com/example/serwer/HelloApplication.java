@@ -38,25 +38,25 @@ public class HelloApplication extends Application {
 
     public static void main(String[] args) throws SQLException {
 
-
-
-        try {
-
-            // Tworzenie gniazda serwera
-            ServerSocket serverSocket = new ServerSocket(1234);
-            System.out.println("Serwer nasłuchuje na porcie 1234...");
-
-            // Oczekiwanie na połączenie klienta
-            while(true) {
-                Socket clientSocket = serverSocket.accept();
-                System.out.println("Połączono z klientem: " + clientSocket.getInetAddress().getHostAddress());
-
-
+        launch();
+//
+//        try {
+//
+//            // Tworzenie gniazda serwera
+//            ServerSocket serverSocket = new ServerSocket(1234);
+//            System.out.println("Serwer nasłuchuje na porcie 1234...");
+//
+//            // Oczekiwanie na połączenie klienta
+//            while(true) {
+//                Socket clientSocket = serverSocket.accept();
+//                System.out.println("Połączono z klientem: " + clientSocket.getInetAddress().getHostAddress());
+//
+//
 
 
                 ///////////////////////////
-                Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbc-travel-managment-system", "root", "root");
-                Statement statement = connection.createStatement();
+//                Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbc-travel-managment-system", "root", "root");
+//                Statement statement = connection.createStatement();
                // ResultSet resultSet = statement.executeQuery("SELECT * FROM klienci WHERE idKlient = 2");
 
 //                while (resultSet.next()) {
@@ -73,7 +73,7 @@ public class HelloApplication extends Application {
 //
 //                }
 
-                saldostr = Float.toString(saldo);
+//                saldostr = Float.toString(saldo);
 
                 //odczytywanie zapytan
 //            String request, response;
@@ -86,30 +86,30 @@ public class HelloApplication extends Application {
 //                response = "" + password;
 //                out.println(response);
 //            }
-                // Inicjalizacja strumieni wejścia/wyjścia
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-
-                String query1 = in.readLine();
-                System.out.println("Otrzymane zapytanie login: " + query1);
-               // String zapytanielogin = query1;
-                String query2 = in.readLine();
-                System.out.println("Otrzymane zapytanie haslo: " + query2);
-                String zapytanie = "Select login,haslo from klienci where login = ? and haslo = ?";
-                PreparedStatement preparedStatement = connection.prepareStatement(zapytanie);
-                preparedStatement.setString(1, query1);
-                preparedStatement.setString(2, query2);
-                ResultSet resultSet = preparedStatement.executeQuery();
-
-                while(resultSet.next())
-                {
-                    String login = resultSet.getString("login");
-                    out.println(login);
-                    String haslo = resultSet.getString("haslo");
-                    out.println(haslo);
-
-                  System.out.println("Haslo: " + resultSet.getString("haslo"));
-                }
+//                // Inicjalizacja strumieni wejścia/wyjścia
+//                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+//                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+//
+//                String query1 = in.readLine();
+//                System.out.println("Otrzymane zapytanie login: " + query1);
+//               // String zapytanielogin = query1;
+//                String query2 = in.readLine();
+//                System.out.println("Otrzymane zapytanie haslo: " + query2);
+//                String zapytanie = "Select login,haslo from klienci where login = ? and haslo = ?";
+//                PreparedStatement preparedStatement = connection.prepareStatement(zapytanie);
+//                preparedStatement.setString(1, query1);
+//                preparedStatement.setString(2, query2);
+//                ResultSet resultSet = preparedStatement.executeQuery();
+//
+//                while(resultSet.next())
+//                {
+//                    String login = resultSet.getString("login");
+//                    out.println(login);
+//                    String haslo = resultSet.getString("haslo");
+//                    out.println(haslo);
+//
+//                  System.out.println("Haslo: " + resultSet.getString("haslo"));
+//                }
 
 
 
@@ -120,23 +120,21 @@ public class HelloApplication extends Application {
                 // Zamknięcie strumieni i gniazda klienta
                 //in.close();
 
-                launch();
-                preparedStatement.close();
-                connection.close();
+
+//                preparedStatement.close();
+//                connection.close();
 
 
                 //////////////////////////
 
                 // Zamknięcie połączenia
-                in.close();
-                //out.close();
-                clientSocket.close();
-                serverSocket.close();
+//                in.close();
+//                //out.close();
+//                clientSocket.close();
+//                serverSocket.close();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
 
 
     }
-}
+
