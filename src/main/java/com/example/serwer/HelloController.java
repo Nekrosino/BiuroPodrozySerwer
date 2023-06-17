@@ -46,8 +46,22 @@ public class HelloController implements Initializable {
     private ServerSocket serverSocket;
     private Connection connection;
     private Statement statement;
+
+    private PreparedStatement preparedStatement;
+
+    private String baseUrl = "jdbc:mysql://localhost:3306/jdbc-travel-managment-system";
+    private String baseLogin = "root";
+
+    private String basePassword = "root";
+
+    private String returnedUsername;
+    private String returnedPassword;
+
+
+    String sql;
     private Map<String, String> sessions = new HashMap<>(); // kolekcja sesji klientów
-    public void start() throws IOException {
+    public void start_server() throws IOException, SQLException {
+
         // Tworzenie gniazda serwera
         serverSocket = new ServerSocket(1234);
         System.out.println("Serwer nasłuchuje na porcie 1234...");
@@ -69,7 +83,17 @@ public class HelloController implements Initializable {
                 String[] parts = request.split(" ");
                 String username = parts[1];
                 String password = parts[2];
+                openBase();
+                sql = "Select login,haslo from klienci where login = ? and haslo = ?";
+                ResultSet resultSet = executeQuery(sql,username,password);
+                while (resultSet.next()) {
+                     returnedUsername = resultSet.getString("login");
+                     returnedPassword = resultSet.getString("haslo");
 
+                }
+                closeBase();
+                System.out.println("Login z bazy:"+returnedUsername);
+                System.out.println("Haslo z bazy:"+returnedPassword);
                 // Sprawdzenie poprawności danych logowania
                 if (checkCredentials(username, password)) {
                     // Generowanie identyfikatora sesji
@@ -106,7 +130,8 @@ public class HelloController implements Initializable {
     private boolean checkCredentials(String username, String password) {
         // Sprawdzenie poprawności danych logowania
         // (możesz zaimplementować własną logikę weryfikacji danych)
-        return username.equals("piotr") && password.equals("piotr");
+
+        return username.equals(returnedUsername) && password.equals(returnedPassword);
     }
 
     private String generateSessionId() {
@@ -118,12 +143,12 @@ public class HelloController implements Initializable {
 
     public void switchToMenu(ActionEvent event) throws IOException {
 
-        Parent root = FXMLLoader.load(getClass().getResource("hello-view.fxml"));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        // scene.getStylesheets().add(css);
-        //setUsername(username);
-        stage.setScene(scene);
+        Parent root = FXMLLoader.load(getClass().getResource("loginMenu.fxml"));
+        Scene loginMenu = new Scene( root);
+        stage.setTitle("Hello!");
+        String css=this.getClass().getResource("style.css").toExternalForm();
+        loginMenu.getStylesheets().add(css);
+        stage.setScene(loginMenu);
         stage.show();
 
 
@@ -137,14 +162,16 @@ public class HelloController implements Initializable {
     }
 
 
-    @FXML
+
     public void initialize(URL url, ResourceBundle resourceBundle) {
         //WelcomeLabel.setText("Hello "+ user+"!");
+
         try {
-            start();
-        } catch (IOException e) {
+            start_server();
+        } catch (IOException | SQLException e) {
             throw new RuntimeException(e);
         }
+
 
     }
 
@@ -154,4 +181,28 @@ public class HelloController implements Initializable {
             serverSocket.close();
         }
     }
+
+    public void openBase() throws SQLException {
+        connection = DriverManager.getConnection(baseUrl,baseLogin,basePassword);
+    }
+
+    public ResultSet executeQuery(String sql, Object... parameters) throws  SQLException{
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        for(int i=0;i<parameters.length;i++)
+        {
+            preparedStatement.setObject(i+1,parameters[i]);
+        }
+
+        return preparedStatement.executeQuery();
+    }
+
+    public void closeBase() throws  SQLException{
+        if(connection!=null)
+        {
+            connection.close();
+        }
+    }
+
+
+
 }

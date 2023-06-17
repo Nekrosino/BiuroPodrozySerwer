@@ -23,7 +23,7 @@ public class HelloApplication extends Application {
     public static String saldostr;
     public static String password;
 
-    @Override
+
     public void start(Stage stage) throws IOException {
 
         Parent root = FXMLLoader.load(getClass().getResource("loginMenu.fxml"));
