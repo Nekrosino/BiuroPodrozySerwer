@@ -56,6 +56,8 @@ public class HelloController implements Initializable {
 
     private String returnedUsername;
     private String returnedPassword;
+    private String returnedSurname;
+    private String returnedSaldo;
 
 
     String sql;
@@ -118,6 +120,29 @@ public class HelloController implements Initializable {
                 } else {
                     out.println("LOGOUT_FAILED");
                 }
+            }
+
+            else if(request.startsWith("PROFILE"))
+            {
+                String[] parts = request.split(" ");
+                String username = parts[1];
+                String password = parts[2];
+                System.out.println("Otrzymane dane"+parts[1]);
+                System.out.println("Otrzymane dane"+parts[2]);
+                openBase();
+                sql = "Select * from klienci where login = ? and haslo = ?";
+                ResultSet resultSet = executeQuery(sql,username,password);
+                while (resultSet.next()) {
+                    returnedUsername = resultSet.getString("Imie");
+                    returnedSurname = resultSet.getString("Nazwisko");
+                    returnedSaldo = resultSet.getString("portfel");
+
+                }
+                closeBase();
+                System.out.println(returnedUsername);
+                System.out.println(returnedSurname);
+                System.out.println(returnedSaldo);
+                out.println("PROFILEDATA " +returnedUsername+" "+returnedSurname+" "+returnedSaldo);
             }
 
             // Obsługa innych żądań...
