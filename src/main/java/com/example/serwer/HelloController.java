@@ -49,7 +49,7 @@ public class HelloController implements Initializable {
 
     private PreparedStatement preparedStatement;
 
-    private String baseUrl = "jdbc:mysql://localhost:3306/jdbc-travel-managment-system";
+    private String baseUrl = "jdbc:mysql://localhost:3306/biuropodrozy";
     private String baseLogin = "root";
 
     private String basePassword = "root";
@@ -58,6 +58,11 @@ public class HelloController implements Initializable {
     private String returnedPassword;
     private String returnedSurname;
     private String returnedSaldo;
+
+    private String nazwaWycieczki;
+    private String cenaWycieczki;
+    private String dataRozpoczecia;
+    private String dataZakonczenia;
 
 
     String sql;
@@ -167,6 +172,30 @@ public class HelloController implements Initializable {
             }
 
             // Obsługa innych żądań...
+
+            else if(request.startsWith("GETWYCIECZKA"))
+            {
+                String[] parts = request.split(" ");
+                String idWycieczki = parts[1];
+
+                openBase();
+                sql = "SELECT * FROM wycieczki WHERE idwycieczki = ? ";
+
+                ResultSet resultSet = executeQuery(sql,idWycieczki);
+                while (resultSet.next()) {
+                     nazwaWycieczki = resultSet.getString("nazwa");
+                     dataRozpoczecia = resultSet.getString("data_rozpoczecia");
+                     dataZakonczenia = resultSet.getString("data_zakonczenia");
+                     cenaWycieczki = resultSet.getString("cena");
+
+                }
+                closeBase();
+               // System.out.println(returnedUsername);
+               // System.out.println(returnedSurname);
+                //System.out.println(returnedSaldo);
+                out.println("GETWYCIECZKA " + nazwaWycieczki +" "+dataRozpoczecia+" "+dataZakonczenia+" "+cenaWycieczki);
+
+            }
 
             // Zamknięcie połączenia z klientem
             clientSocket.close();
