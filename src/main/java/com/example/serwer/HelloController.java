@@ -144,6 +144,27 @@ public class HelloController implements Initializable {
                 System.out.println(returnedSaldo);
                 out.println("PROFILEDATA " +returnedUsername+" "+returnedSurname+" "+returnedSaldo);
             }
+            else if(request.startsWith("REGISTERUSER"))
+            {
+
+
+                String[] parts = request.split(" ");
+                int idklienta = 3 ;
+                String name = parts[1];
+                String surname = parts[2];
+                String adres = parts[3];
+                String numertel = parts[4];
+                String email = parts[5];
+                String login = parts[6];
+                String haslo = parts[7];
+                String portfel = parts[8];
+
+                openBase();
+                sql = "INSERT INTO klienci (idKlient, Imie, Nazwisko, Adres, NumerTel,Email,login,haslo,portfel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                int AffectedRows = executeUpdate(sql,idklienta,name,surname,adres,numertel,email,login,haslo,portfel);
+                closeBase();
+
+            }
 
             // Obsługa innych żądań...
 
@@ -219,6 +240,15 @@ public class HelloController implements Initializable {
         }
 
         return preparedStatement.executeQuery();
+    }
+
+    public int executeUpdate(String sql, Object... parameters) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        for(int i = 0; i < parameters.length; i++) {
+            preparedStatement.setObject(i + 1, parameters[i]);
+        }
+
+        return preparedStatement.executeUpdate();
     }
 
     public void closeBase() throws  SQLException{
