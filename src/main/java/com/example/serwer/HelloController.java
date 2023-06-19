@@ -1,21 +1,15 @@
 package com.example.serwer;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,14 +23,15 @@ import java.util.ResourceBundle;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static com.example.serwer.HelloApplication.user;
-import static com.example.serwer.HelloApplication.saldostr;
 
+/**
+ *
+ Klasa HelloController implementuje interfejs Initializable z JavaFX i jest kontrolerem dla widoku loginMenu.fxml
+ */
 public class HelloController implements Initializable {
 
     private Stage stage;
-    private Scene scene;
-    private Parent root;
+
     @FXML
     Label WelcomeLabel;
     @FXML
@@ -45,9 +40,7 @@ public class HelloController implements Initializable {
     Label SaldoLabel;
     private ServerSocket serverSocket;
     private Connection connection;
-    private Statement statement;
 
-    private PreparedStatement preparedStatement;
 
     private String baseUrl = "jdbc:mysql://localhost:3306/biuropodrozy";
     private String baseLogin = "root";
@@ -64,9 +57,20 @@ public class HelloController implements Initializable {
     private String dataRozpoczecia;
     private String dataZakonczenia;
 
-
+    /**
+     * Zapytania kierowane do bazy danych
+     */
     String sql;
-    private Map<String, String> sessions = new HashMap<>(); // kolekcja sesji klientów
+    /**
+     *  kolekcja sesji klientów
+     */
+    private Map<String, String> sessions = new HashMap<>();
+
+    /**
+     * Metoda inicjalizująca serwer. Tworzy gniazdo serwera, nasłuchuje na połączenia klientów i obsługuje żądania.
+     * @throws IOException
+     * @throws SQLException
+     */
     public void start_server() throws IOException, SQLException {
 
         // Tworzenie gniazda serwera
@@ -190,32 +194,41 @@ public class HelloController implements Initializable {
 
                 }
                 closeBase();
-               // System.out.println(returnedUsername);
-               // System.out.println(returnedSurname);
-                //System.out.println(returnedSaldo);
                 out.println("GETWYCIECZKA " + nazwaWycieczki +" "+dataRozpoczecia+" "+dataZakonczenia+" "+cenaWycieczki);
 
             }
 
-            // Zamknięcie połączenia z klientem
+
             clientSocket.close();
         }
     }
 
+    /**
+     * Metoda sprawdzająca poprawność danych logowania na podstawie zwróconych wartości z bazy danych.
+     * @param username nazwa użytkownika
+     * @param password hasło użytkownika
+     * @return zwraca wartość true albo false
+     */
     private boolean checkCredentials(String username, String password) {
-        // Sprawdzenie poprawności danych logowania
-        // (możesz zaimplementować własną logikę weryfikacji danych)
+
 
         return username.equals(returnedUsername) && password.equals(returnedPassword);
     }
 
+    /**
+     *  Metoda generująca unikalny identyfikator sesji.
+     * @return zwraca unikalny identyfikator
+     */
     private String generateSessionId() {
-        // Generowanie unikalnego identyfikatora sesji
-        // (możesz zaimplementować własną logikę generowania identyfikatorów sesji)
+
         return UUID.randomUUID().toString();
     }
 
-
+    /**
+     * Metoda obsługująca przełączenie na widok menu głównego.
+     * @param event obsługa zdarzenia
+     * @throws IOException
+     */
     public void switchToMenu(ActionEvent event) throws IOException {
 
         Parent root = FXMLLoader.load(getClass().getResource("loginMenu.fxml"));
@@ -225,21 +238,15 @@ public class HelloController implements Initializable {
         loginMenu.getStylesheets().add(css);
         stage.setScene(loginMenu);
         stage.show();
-
-
-
-
-    }
-
-    public void onProfileButtonClick(ActionEvent e)
-    {
-        SaldoLabel.setText(saldostr);
     }
 
 
-
+    /**
+     *  Metoda inicjalizująca kontroler. Uruchamia serwer i ustawia odpowiednie wartości w interfejsie użytkownika.
+     * @param url
+     * @param resourceBundle
+     */
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        //WelcomeLabel.setText("Hello "+ user+"!");
 
         try {
             start_server();
@@ -250,6 +257,10 @@ public class HelloController implements Initializable {
 
     }
 
+    /**
+     * Metoda zamykająca gniazdo serwera.
+     * @throws IOException
+     */
     public void stop() throws IOException {
         // Zamknięcie gniazda serwera
         if (serverSocket != null) {
@@ -257,10 +268,21 @@ public class HelloController implements Initializable {
         }
     }
 
+    /**
+     * Metoda otwierająca połączenie z bazą danych
+     * @throws SQLException
+     */
     public void openBase() throws SQLException {
         connection = DriverManager.getConnection(baseUrl,baseLogin,basePassword);
     }
 
+    /**
+     *  Metoda przyjmuje zapytanie SQL oraz opcjonalne parametry i wykonuje to zapytanie na połączeniu z bazą danych.
+     * @param sql zapaytanie języka SQL
+     * @param parameters parametry zapytania
+     * @return zwraca wynik zapytania jako obiekt typu ResultSet
+     * @throws SQLException
+     */
     public ResultSet executeQuery(String sql, Object... parameters) throws  SQLException{
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for(int i=0;i<parameters.length;i++)
@@ -271,6 +293,13 @@ public class HelloController implements Initializable {
         return preparedStatement.executeQuery();
     }
 
+    /**
+     * Metoda executeUpdate przyjmuje zapytanie SQL oraz opcjonalne parametry i wykonuje to zapytanie na połączeniu z bazą danych.
+     * @param sql zapaytanie języka SQL
+     * @param parameters parametry zapytania
+     * @return zwraca liczbę zmienionych rekordów jako wynik wykonanego zapytania.
+     * @throws SQLException
+     */
     public int executeUpdate(String sql, Object... parameters) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         for(int i = 0; i < parameters.length; i++) {
@@ -280,6 +309,10 @@ public class HelloController implements Initializable {
         return preparedStatement.executeUpdate();
     }
 
+    /**
+     * Metoda zamykająca połączenie z bazą
+     * @throws SQLException
+     */
     public void closeBase() throws  SQLException{
         if(connection!=null)
         {
