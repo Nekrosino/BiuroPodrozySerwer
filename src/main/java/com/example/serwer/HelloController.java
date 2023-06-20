@@ -59,6 +59,7 @@ public class HelloController implements Initializable {
     private String returnedSurname;
     private String returnedSaldo;
     private int returnedID;
+    private String checkLogins;
 
     private String nazwaWycieczki;
     private String cenaWycieczki;
@@ -153,6 +154,7 @@ public class HelloController implements Initializable {
             else if(request.startsWith("REGISTERUSER"))
             {
 
+
                 String[] parts = request.split(" ");
                 String idklienta = parts[1];
                 String name = parts[2];
@@ -164,10 +166,31 @@ public class HelloController implements Initializable {
                 String haslo = parts[8];
                 String portfel = parts[9];
 
+
+                sql = "SELECT login from klienci where login = ?";
                 openBase();
-                sql = "INSERT INTO klienci (idKlient, Imie, Nazwisko, Adres, NumerTel,Email,login,haslo,portfel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                int AffectedRows = executeUpdate(sql,idklienta,name,surname,adres,numertel,email,login,haslo,portfel);
-                closeBase();
+                ResultSet resultSet = executeQuery(sql,login);
+                while(resultSet.next())
+                {
+                    checkLogins = resultSet.getString("login");
+                }
+                if(checkLogins.equals(login))
+                {
+                    closeBase();
+                    System.out.println("W bazie znajduje sie juz"+checkLogins);
+                    out.println("REGISTERFAILED");
+
+                }
+
+                else {
+
+                    openBase();
+                    sql = "INSERT INTO klienci (idKlient, Imie, Nazwisko, Adres, NumerTel,Email,login,haslo,portfel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    executeUpdate(sql, idklienta, name, surname, adres, numertel, email, login, haslo, portfel);
+                    closeBase();
+                    System.out.println("Udalo sie zarejestrowac uzytkownika"+login);
+                    out.println("REGISTERSUCCESS");
+                }
 
             }
 
