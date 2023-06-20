@@ -49,7 +49,7 @@ public class HelloController implements Initializable {
 
     private PreparedStatement preparedStatement;
 
-    private String baseUrl = "jdbc:mysql://localhost:3306/jdbc-travel-managment-system";
+    private String baseUrl = "jdbc:mysql://localhost:3306/biuropodrozy";
     private String baseLogin = "root";
 
     private String basePassword = "root";
@@ -269,6 +269,20 @@ public class HelloController implements Initializable {
                 sql = "INSERT INTO rezerwacje (idrezerwacje, idklienta, idwycieczki, data_rezerwacji) VALUES (?, ?, ?, ?)";
                 System.out.println("ID REZERWACJI TO: "+strValue);
                 executeUpdate(sql,strValue,idklienta,idwycieczki,data_rezerwacji);
+                closeBase();
+
+            }
+
+
+
+            else if(request.startsWith("PAYMENT"))
+            {
+                String [] parts = request.split(" ");
+                cenaWycieczki = parts[1];
+                returnedUsername = parts[2];
+                openBase();
+                sql = "UPDATE Klienci SET portfel = portfel - ? WHERE login = ?";
+                executeUpdate(sql,cenaWycieczki,returnedUsername );
                 closeBase();
 
             }
