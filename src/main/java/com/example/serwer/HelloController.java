@@ -59,6 +59,10 @@ public class HelloController implements Initializable {
     private String returnedSurname;
     private String returnedSaldo;
     private int returnedID;
+
+    private  String loggedUserID;
+
+    private int returnedidrezerwacje;
     private String checkLogins;
 
     private String nazwaWycieczki;
@@ -132,24 +136,30 @@ public class HelloController implements Initializable {
             else if(request.startsWith("PROFILE"))
             {
                 String[] parts = request.split(" ");
+               // String username = parts[1];
+              //  String password = parts[2];
+               // System.out.println("Otrzymane dane"+parts[1]);
+               // System.out.println("Otrzymane dane"+parts[2]);
                 String username = parts[1];
-                String password = parts[2];
-                System.out.println("Otrzymane dane"+parts[1]);
-                System.out.println("Otrzymane dane"+parts[2]);
+                sql = "Select * from klienci where login = ?";
                 openBase();
-                sql = "Select * from klienci where login = ? and haslo = ?";
-                ResultSet resultSet = executeQuery(sql,username,password);
+               // sql = "Select * from klienci where login = ? and haslo = ?";
+                ResultSet resultSet = executeQuery(sql,username);
+               // ResultSet resultSet = executeQuery(sql,username,password);
                 while (resultSet.next()) {
                     returnedUsername = resultSet.getString("Imie");
                     returnedSurname = resultSet.getString("Nazwisko");
                     returnedSaldo = resultSet.getString("portfel");
+                    loggedUserID = resultSet.getString("idKlient");
+
 
                 }
                 closeBase();
                 System.out.println(returnedUsername);
                 System.out.println(returnedSurname);
                 System.out.println(returnedSaldo);
-                out.println("PROFILEDATA " +returnedUsername+" "+returnedSurname+" "+returnedSaldo);
+                System.out.println(loggedUserID);
+                out.println("PROFILEDATA " +returnedUsername+" "+returnedSurname+" "+returnedSaldo+" "+loggedUserID);
             }
             else if(request.startsWith("REGISTERUSER"))
             {
@@ -238,7 +248,30 @@ public class HelloController implements Initializable {
 
             }
 
+            else if(request.startsWith("BUYWYCIECZKA"))
+            {
+                openBase();
+                sql = "SELECT idrezerwacje FROM rezerwacje ORDER BY idrezerwacje DESC LIMIT 1";
+                ResultSet resultSet = executeQuery(sql);
+                while (resultSet.next())
+                {
+                    returnedidrezerwacje = resultSet.getInt("idrezerwacje");
+                }
+                //closeBase();
 
+                returnedidrezerwacje+=1;
+                //openBase();
+                String strValue = Integer.toString(returnedidrezerwacje);
+                String[] parts = request.split(" ");
+                String idklienta = parts[1];
+                String idwycieczki = parts[2];
+                String data_rezerwacji = parts[3];
+                sql = "INSERT INTO rezerwacje (idrezerwacje, idklienta, idwycieczki, data_rezerwacji) VALUES (?, ?, ?, ?)";
+                System.out.println("ID REZERWACJI TO: "+strValue);
+                executeUpdate(sql,strValue,idklienta,idwycieczki,data_rezerwacji);
+                closeBase();
+
+            }
 
             // Zamknięcie połączenia z klientem
             clientSocket.close();
