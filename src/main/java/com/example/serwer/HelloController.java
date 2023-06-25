@@ -70,6 +70,8 @@ public class HelloController implements Initializable {
     private String dataRozpoczecia;
     private String dataZakonczenia;
 
+    private String ubezpieczenie; //dodane
+
 
     String sql;
     private Map<String, String> sessions = new HashMap<>(); // kolekcja sesji klientów
@@ -238,13 +240,15 @@ public class HelloController implements Initializable {
                      dataRozpoczecia = resultSet.getString("data_rozpoczecia");
                      dataZakonczenia = resultSet.getString("data_zakonczenia");
                      cenaWycieczki = resultSet.getString("cena");
+                     ubezpieczenie= resultSet.getString("ubezpieczenie");
+
 
                 }
                 closeBase();
                // System.out.println(returnedUsername);
                // System.out.println(returnedSurname);
                 //System.out.println(returnedSaldo);
-                out.println("GETWYCIECZKA " + nazwaWycieczki +" "+dataRozpoczecia+" "+dataZakonczenia+" "+cenaWycieczki);
+                out.println("GETWYCIECZKA " + nazwaWycieczki +" "+dataRozpoczecia+" "+dataZakonczenia+" "+cenaWycieczki+" "+ubezpieczenie);
 
             }
 
@@ -280,6 +284,8 @@ public class HelloController implements Initializable {
                 String [] parts = request.split(" ");
                 cenaWycieczki = parts[1];
                 returnedUsername = parts[2];
+
+
                 openBase();
                 sql = "UPDATE Klienci SET portfel = portfel - ? WHERE login = ?";
                 executeUpdate(sql,cenaWycieczki,returnedUsername );
@@ -315,8 +321,6 @@ public class HelloController implements Initializable {
         loginMenu.getStylesheets().add(css);
         stage.setScene(loginMenu);
         stage.show();
-
-
 
 
     }
